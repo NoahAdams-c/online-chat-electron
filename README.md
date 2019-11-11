@@ -1,6 +1,12 @@
-# electron-vue-demo
-
-> An electron-vue project
+<!--
+ * @Description: 
+ * @Author: OBKoro1
+ * @Date: 2019-11-11 11:42:50
+ * @LastEditors: chenchen
+ * @LastEditTime: 2019-11-11 11:42:51
+ -->
+# online-chat-electron
+my online chat demo by electron
 
 #### Build Setup
 
