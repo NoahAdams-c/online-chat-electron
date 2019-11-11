@@ -3,7 +3,7 @@
  * @Author: OBKoro1
  * @Date: 2019-08-28 15:26:51
  * @LastEditors: chenchen
- * @LastEditTime: 2019-11-08 15:56:16
+ * @LastEditTime: 2019-11-11 17:29:52
  */
 import Vue from "vue"
 import App from "./App"
@@ -48,10 +48,11 @@ import "element-ui/lib/theme-chalk/index.css"
 // 引入socketio
 // import SIO from "socket.io-client"
 const SIO = require("socket.io-client/dist/socket.io")
-// const SERVER_HOST = "192.168.1.8:7003"
-// const SERVER_HOST = "192.168.1.219:7003"
-const SERVER_HOST = "119.23.52.173:7003"
-// const SERVER_HOST = "192.168.1.71:7003"
+// 服务器地址
+const SERVER_HOST =
+	process.env.NODE_ENV === "production"
+		? "119.23.52.173:7003"
+		: "127.0.0.1:7003"
 // 将socket注入全局对象
 Vue.prototype.$socket = SIO
 Vue.prototype.SERVER_HOST = SERVER_HOST
