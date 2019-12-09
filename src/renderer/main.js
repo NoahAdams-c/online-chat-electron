@@ -3,7 +3,7 @@
  * @Author: OBKoro1
  * @Date: 2019-08-28 15:26:51
  * @LastEditors: chenchen
- * @LastEditTime: 2019-11-11 17:29:52
+ * @LastEditTime: 2019-12-09 18:39:04
  */
 import Vue from "vue"
 import App from "./App"
@@ -23,9 +23,8 @@ import {
 	Menu,
 	Submenu,
 	MenuItem,
-	Avatar,
-	Loading
-	// Badge
+	Loading,
+	Upload
 } from "element-ui"
 Vue.component(Button.name, Button)
 Vue.component(Input.name, Input)
@@ -38,8 +37,7 @@ Vue.component(Main.name, Main)
 Vue.component(Menu.name, Menu)
 Vue.component(Submenu.name, Submenu)
 Vue.component(MenuItem.name, MenuItem)
-Vue.component(Avatar.name, Avatar)
-// Vue.component(Badge.name, Badge)
+Vue.component(Upload.name, Upload)
 Vue.prototype.$message = Message
 Vue.use(Loading.directive)
 

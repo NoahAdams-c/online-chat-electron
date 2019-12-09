@@ -3,7 +3,7 @@
  * @Author: OBKoro1
  * @Date: 2019-08-28 15:10:22
  * @LastEditors: chenchen
- * @LastEditTime: 2019-11-08 16:23:26
+ * @LastEditTime: 2019-12-09 18:39:24
  -->
 <template>
   <div class="chat">
@@ -13,10 +13,18 @@
         <el-aside>
           <!-- 用户信息 -->
           <div class="chat__user">
-            <el-avatar class="chat__user--avatar"
-                       icon="el-icon-user-solid"></el-avatar>
+            <div class="chat__user--avatar">
+              <el-upload :action="`http://${SERVER_HOST}/${userInfo.user_id}/uploadAvatar`"
+                         :show-file-list="false"
+                         :on-success="afterUploadAvatar">
+                <div class="avatar-img"
+                     :style="`background: url(${avatarUrl});`">
+                </div>
+              </el-upload>
+            </div>
             <div class="chat__user--name">{{userInfo.nick_name}}</div>
           </div>
+
           <!-- 聊天列表 -->
           <div class="chat__slist"
                v-loading="isLoadingList">
@@ -87,6 +95,7 @@ export default {
 	data() {
 		return {
 			userInfo: {}, // 用户信息
+			avatarUrl: "", // 头像url
 			// msgList: [],
 			msg: "", // 当前输入的消息
 			logs: "", // 消息缓存
@@ -217,12 +226,22 @@ export default {
 			this.$store.commit("updateSocket", null)
 			// 跳转回登录页
 			this.$router.push({ path: "/" })
+		},
+
+		/**
+		 * 上传头像成功回调
+		 */
+		afterUploadAvatar(data) {
+			this.userInfo.avatar = data.data.path
+			this.$store.commit("updateUserInfo", this.userInfo)
+			this.avatarUrl = "http://" + this.SERVER_HOST + this.userInfo.avatar
 		}
 	},
 
 	created() {
 		// 从store中获取用户信息和socket对象
 		this.userInfo = this.getUserInfo
+		this.avatarUrl = "http://" + this.SERVER_HOST + this.userInfo.avatar
 		this.socketObj = this.getSocket
 		// 延迟一秒关闭加载状态以获取在线用户列表
 		setTimeout(() => {
@@ -244,7 +263,6 @@ export default {
 				}
 			})
 		}
-		document.body.clientHeight <= 768
 	}
 }
 </script>
@@ -293,7 +311,14 @@ export default {
 		align-items: center;
 		background-color: #409eff;
 		&--avatar {
-			margin: 10px;
+			margin: 15px;
+			.avatar-img {
+				height: 45px;
+				width: 45px;
+				background-repeat: no-repeat !important;
+				background-size: contain !important;
+				border-radius: 100px;
+			}
 		}
 		&--name {
 			display: inline-block;
