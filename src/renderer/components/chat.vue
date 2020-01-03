@@ -3,7 +3,7 @@
  * @Author: OBKoro1
  * @Date: 2019-08-28 15:10:22
  * @LastEditors: chenchen
- * @LastEditTime: 2020-01-03 11:18:40
+ * @LastEditTime: 2020-01-03 17:08:27
  -->
 <template>
   <div class="chat">
@@ -24,25 +24,27 @@
                 <div
                   class="avatar-img"
                   :style="`background: url(${avatarUrl});`"
-                ></div>
+                />
               </el-upload>
             </div>
-            <div class="chat__user--name">{{ userInfo.nick_name }}</div>
+            <div class="chat__user--name">
+              {{ userInfo.nick_name }}
+            </div>
           </div>
 
           <!-- 聊天列表 -->
-          <div class="chat__slist" v-loading="isLoadingList">
+          <div v-loading="isLoadingList" class="chat__slist">
             <div
-              class="chat__slist--item"
-              :class="{ active: toWho.userId === item.userId }"
               v-for="(item, index) in getOnlineUsers"
               :key="index"
+              class="chat__slist--item"
+              :class="{ active: toWho.userId === item.userId }"
               @click="startChat(item)"
             >
               {{ item.nickName }}
               <div
-                class="chat__slist--item__unread"
                 v-if="unreadSessionList.indexOf(item.userId) > -1"
+                class="chat__slist--item__unread"
               >
                 New
               </div>
@@ -51,13 +53,13 @@
           <!-- 底部菜单 -->
           <div class="chat__menu">
             <div class="chat__menu--item">
-              <i class="el-icon-setting" title="设置"></i>
+              <i class="el-icon-setting" title="设置" />
             </div>
             <div class="chat__menu--item">
-              <i class="el-icon-circle-plus-outline" title="添加朋友"></i>
+              <i class="el-icon-circle-plus-outline" title="添加朋友" />
             </div>
             <div class="chat__menu--item">
-              <i class="el-icon-switch-button" title="退出" @click="logout"></i>
+              <i class="el-icon-switch-button" title="退出" @click="logout" />
             </div>
           </div>
         </el-aside>
@@ -65,10 +67,12 @@
         <el-main height="">
           <template v-if="!!toWho.userId">
             <!-- 标题 -->
-            <div class="chat__title">{{ toWho.nickName }}</div>
+            <div class="chat__title">
+              {{ toWho.nickName }}
+            </div>
             <!-- 对话展示 -->
-            <div class="chat__view" v-loading="isLoadingMsg">
-              <textarea ref="viewTextarea" v-model="logs" readonly></textarea>
+            <div v-loading="isLoadingMsg" class="chat__view">
+              <textarea ref="viewTextarea" v-model="logs" readonly />
             </div>
             <!-- 输入部分 -->
             <div class="chat__write">
@@ -76,7 +80,7 @@
                 ref="writeTextarea"
                 v-model="msg"
                 @keypress.enter="sendMessage"
-              ></textarea>
+              />
             </div>
           </template>
           <!-- 当未选择用户开始会话时展示空白页 -->
@@ -92,7 +96,7 @@
 </template>
 
 <script>
-import { trim } from "lodash/trim"
+import { trim } from "lodash"
 import { mapGetters } from "vuex"
 
 export default {
@@ -151,6 +155,33 @@ export default {
         }
       },
       deep: true
+    }
+  },
+
+  created() {
+    // 从store中获取用户信息和socket对象
+    this.userInfo = this.getUserInfo
+    this.avatarUrl = "http://" + this.SERVER_HOST + this.userInfo.avatar
+    this.socketObj = this.getSocket
+    // 延迟一秒关闭加载状态以获取在线用户列表
+    setTimeout(() => {
+      this.isLoadingList = false
+    }, 1000)
+    if (this.socketObj) {
+      // 监听服务端发送的消息
+      this.socketObj.on("resp", data => {
+        // 仅当收发人为当前会话收发人时才将消息缓存并显示
+        if (
+          data.from === this.toWho.userId &&
+          data.to === this.userInfo.user_id
+        ) {
+          this.logs += `\n${new Date().toLocaleString()}\n`
+          this.logs += `${this.toWho.nickName}：${data.msg}\n`
+        } else {
+          // 否则将userId存入未读会话列表并在会话列表提示
+          this.unreadSessionList.push(data.from)
+        }
+      })
     }
   },
 
@@ -238,33 +269,6 @@ export default {
       this.userInfo.avatar = data.data.path
       this.$store.commit("updateUserInfo", this.userInfo)
       this.avatarUrl = "http://" + this.SERVER_HOST + this.userInfo.avatar
-    }
-  },
-
-  created() {
-    // 从store中获取用户信息和socket对象
-    this.userInfo = this.getUserInfo
-    this.avatarUrl = "http://" + this.SERVER_HOST + this.userInfo.avatar
-    this.socketObj = this.getSocket
-    // 延迟一秒关闭加载状态以获取在线用户列表
-    setTimeout(() => {
-      this.isLoadingList = false
-    }, 1000)
-    if (this.socketObj) {
-      // 监听服务端发送的消息
-      this.socketObj.on("resp", data => {
-        // 仅当收发人为当前会话收发人时才将消息缓存并显示
-        if (
-          data.from === this.toWho.userId &&
-          data.to === this.userInfo.user_id
-        ) {
-          this.logs += `\n${new Date().toLocaleString()}\n`
-          this.logs += `${this.toWho.nickName}：${data.msg}\n`
-        } else {
-          // 否则将userId存入未读会话列表并在会话列表提示
-          this.unreadSessionList.push(data.from)
-        }
-      })
     }
   }
 }

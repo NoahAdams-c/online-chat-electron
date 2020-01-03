@@ -3,12 +3,13 @@
  * @Author: chenchen
  * @Date: 2019-11-18 17:35:34
  * @LastEditors: chenchen
- * @LastEditTime: 2019-11-18 17:45:21
+ * @LastEditTime: 2020-01-03 16:17:57
  */
 module.exports = {
   root: true,
   parserOptions: {
-    parser: "babel-eslint"
+    parser: "babel-eslint",
+    sourceType: "module"
   },
   env: {
     browser: true,
@@ -16,12 +17,15 @@ module.exports = {
   },
   plugins: ["vue"],
   extends: [
-    // "standard", //使用standard做代码规范
+    "plugin:vue/essential",
+    "plugin:vue/recommended",
     "plugin:prettier/recommended"
   ],
   rules: {
     "prettier/prettier": "error",
     "generator-star-spacing": "off",
+    indent: "off",
+    "no-irregular-whitespace": "off", //这禁止掉 空格报错检查
     "no-debugger": process.env.NODE_ENV === "production" ? "error" : "off"
   }
 }

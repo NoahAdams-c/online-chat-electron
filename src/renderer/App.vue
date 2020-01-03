@@ -13,25 +13,25 @@
 
 <script>
 export default {
-	name: "App"
+  name: "App"
 }
 </script>
 
 <style>
 #app {
-	height: 100vh;
-	/* background: url("./assets/bg.jpg"); */
+  height: 100vh;
+  /* background: url("./assets/bg.jpg"); */
 }
 #app::before {
-	background: url("./assets/bg.jpg") no-repeat;
-	background-size: cover;
-	height: 500px;
-	width: 800px;
-	content: "";
-	position: absolute;
-	top: 0;
-	left: 0;
-	z-index: -1;
-	filter: blur(0.7px);
+  background: url("./assets/bg.jpg") no-repeat;
+  background-size: cover;
+  height: 500px;
+  width: 800px;
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  filter: blur(0.7px);
 }
 </style>

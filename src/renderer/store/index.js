@@ -11,36 +11,36 @@ import Vuex from "vuex"
 Vue.use(Vuex)
 
 export default new Vuex.Store({
-	state: {
-		isLogin: false,
-		userInfo: {},
-		socketObj: null,
-		onlineUsers: []
-	},
-	mutations: {
-		updateSocket(state, socketObj) {
-			state.socketObj = socketObj
-		},
-		updateOnlineUsers(state, onlineUsers) {
-			state.onlineUsers = onlineUsers
-		},
-		updateUserInfo(state, userInfo) {
-			state.userInfo = userInfo
-			state.isLogin = !!userInfo
-		}
-	},
-	getters: {
-		getSocket(state) {
-			return state.socketObj
-		},
-		getOnlineUsers(state) {
-			return state.onlineUsers
-		},
-		getUserInfo(state) {
-			return state.userInfo
-		},
-		getLoginStatus(state) {
-			return state.isLogin
-		}
-	}
+  state: {
+    isLogin: false,
+    userInfo: {},
+    socketObj: null,
+    onlineUsers: []
+  },
+  mutations: {
+    updateSocket(state, socketObj) {
+      state.socketObj = socketObj
+    },
+    updateOnlineUsers(state, onlineUsers) {
+      state.onlineUsers = onlineUsers
+    },
+    updateUserInfo(state, userInfo) {
+      state.userInfo = userInfo
+      state.isLogin = !!userInfo
+    }
+  },
+  getters: {
+    getSocket(state) {
+      return state.socketObj
+    },
+    getOnlineUsers(state) {
+      return state.onlineUsers
+    },
+    getUserInfo(state) {
+      return state.userInfo
+    },
+    getLoginStatus(state) {
+      return state.isLogin
+    }
+  }
 })

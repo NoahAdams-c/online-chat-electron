@@ -15,21 +15,21 @@ import Login from "@/components/login"
 Vue.use(Router)
 
 export default new Router({
-	routes: [
-		{
-			path: "/",
-			name: "Login",
-			component: Login
-		},
-		{
-			path: "/chat",
-			name: "Chat",
-			component: Chat
-		},
-		{
-			path: "/regist",
-			name: "Regist",
-			component: Regist
-		}
-	]
+  routes: [
+    {
+      path: "/",
+      name: "Login",
+      component: Login
+    },
+    {
+      path: "/chat",
+      name: "Chat",
+      component: Chat
+    },
+    {
+      path: "/regist",
+      name: "Regist",
+      component: Regist
+    }
+  ]
 })

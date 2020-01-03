@@ -3,7 +3,7 @@
  * @Author: OBKoro1
  * @Date: 2019-08-28 15:26:51
  * @LastEditors: chenchen
- * @LastEditTime: 2019-12-09 18:39:04
+ * @LastEditTime: 2020-01-03 17:11:27
  */
 import Vue from "vue"
 import App from "./App"
@@ -11,20 +11,20 @@ import router from "./router"
 
 // 引入elementUI
 import {
-	Button,
-	Input,
-	Card,
-	Form,
-	FormItem,
-	Message,
-	Container,
-	Aside,
-	Main,
-	Menu,
-	Submenu,
-	MenuItem,
-	Loading,
-	Upload
+  Button,
+  Input,
+  Card,
+  Form,
+  FormItem,
+  Message,
+  Container,
+  Aside,
+  Main,
+  Menu,
+  Submenu,
+  MenuItem,
+  Loading,
+  Upload
 } from "element-ui"
 Vue.component(Button.name, Button)
 Vue.component(Input.name, Input)
@@ -48,9 +48,9 @@ import "element-ui/lib/theme-chalk/index.css"
 const SIO = require("socket.io-client/dist/socket.io")
 // 服务器地址
 const SERVER_HOST =
-	process.env.NODE_ENV === "production"
-		? "119.23.52.173:7003"
-		: "127.0.0.1:7003"
+  process.env.NODE_ENV === "production"
+    ? "119.23.52.173:7003"
+    : "127.0.0.1:7003"
 // 将socket注入全局对象
 Vue.prototype.$socket = SIO
 Vue.prototype.SERVER_HOST = SERVER_HOST
@@ -65,9 +65,9 @@ Vue.config.productionTip = false
 
 /* eslint-disable no-new */
 new Vue({
-	el: "#app",
-	router,
-	store,
-	components: { App },
-	template: "<App/>"
+  el: "#app",
+  router,
+  store,
+  components: { App },
+  template: "<App/>"
 })
