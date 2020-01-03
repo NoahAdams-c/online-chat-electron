@@ -3,7 +3,7 @@
  * @Author: OBKoro1
  * @Date: 2019-08-28 15:10:22
  * @LastEditors: chenchen
- * @LastEditTime: 2020-01-03 17:08:27
+ * @LastEditTime: 2020-01-03 18:12:47
  -->
 <template>
   <div class="chat">
@@ -72,7 +72,21 @@
             </div>
             <!-- 对话展示 -->
             <div v-loading="isLoadingMsg" class="chat__view">
-              <textarea ref="viewTextarea" v-model="logs" readonly />
+              <!-- <textarea ref="viewTextarea" v-model="logs" readonly /> -->
+              <div
+                class="chat__view--msgbox"
+                :class="
+                  item.user_id === userInfo.user_id
+                    ? 'float-right'
+                    : 'float-left'
+                "
+                v-for="(item, index) of msgList"
+                :key="index"
+              >
+                <div class="chat__view--msgbox__content">
+                  {{ item.content }}
+                </div>
+              </div>
             </div>
             <!-- 输入部分 -->
             <div class="chat__write">
@@ -114,7 +128,8 @@ export default {
       isLoadingList: true, // 是否正在加载在线列表
       isLoadingMsg: true, // 是否正在加载历史消息
       // isMobile: false
-      unreadSessionList: [] // 未读会话列表
+      unreadSessionList: [], // 未读会话列表
+      msgList: []
     }
   },
 
@@ -175,8 +190,12 @@ export default {
           data.from === this.toWho.userId &&
           data.to === this.userInfo.user_id
         ) {
-          this.logs += `\n${new Date().toLocaleString()}\n`
-          this.logs += `${this.toWho.nickName}：${data.msg}\n`
+          // this.logs += `\n${new Date().toLocaleString()}\n`
+          // this.logs += `${this.toWho.nickName}：${data.msg}\n`
+          this.msgList.push({
+            user_id: data.from,
+            content: data.msg
+          })
         } else {
           // 否则将userId存入未读会话列表并在会话列表提示
           this.unreadSessionList.push(data.from)
@@ -214,18 +233,19 @@ export default {
       // 关闭加载状态
       this.isLoadingMsg = false
       if (_data.status === "success") {
-        _data.data.forEach(item => {
-          // 将历史消息数据拼接到消息缓存
-          if (item.user_id === this.userInfo.user_id) {
-            // 如果历史消息的发起者为当前用户，则消息人以‘我’为称呼
-            this.logs += `\n${new Date(item.created_at).toLocaleString()}\n`
-            this.logs += `我：${item.content}\n`
-          } else {
-            // 如果历史消息的发起者不是当前用户，则消息人以发起用户昵称为称呼
-            this.logs += `\n${new Date(item.created_at).toLocaleString()}\n`
-            this.logs += `${this.toWho.nickName}：${item.content}\n`
-          }
-        })
+        this.msgList = _data.data
+        // _data.data.forEach(item => {
+        //   // 将历史消息数据拼接到消息缓存
+        //   if (item.user_id === this.userInfo.user_id) {
+        //     // 如果历史消息的发起者为当前用户，则消息人以‘我’为称呼
+        //     this.logs += `\n${new Date(item.created_at).toLocaleString()}\n`
+        //     this.logs += `我：${item.content}\n`
+        //   } else {
+        //     // 如果历史消息的发起者不是当前用户，则消息人以发起用户昵称为称呼
+        //     this.logs += `\n${new Date(item.created_at).toLocaleString()}\n`
+        //     this.logs += `${this.toWho.nickName}：${item.content}\n`
+        //   }
+        // })
       }
       // this.$refs.viewTextarea.scrollTop = this.$refs.viewTextarea.scrollHeight
     },
@@ -236,8 +256,12 @@ export default {
     sendMessage() {
       this.msg = trim(this.msg)
       // 拼接发送消息到消息缓存
-      this.logs += `\n${new Date().toLocaleString()}\n`
-      this.logs += `我：${this.msg}\n`
+      // this.logs += `\n${new Date().toLocaleString()}\n`
+      // this.logs += `我：${this.msg}\n`
+      this.msgList.push({
+        user_id: this.userInfo.user_id,
+        content: this.msg
+      })
       let data = {
         msg: this.msg,
         to: this.toWho.userId
@@ -388,12 +412,35 @@ export default {
   &__view {
     height: calc(100% - 160px);
     margin-bottom: 10px;
+    overflow-y: auto;
     textarea {
       height: 100%;
       width: 100%;
       border: unset;
       outline: unset;
       resize: none;
+    }
+    &--msgbox {
+      display: flex;
+      margin: 5px;
+      &__content {
+        width: fit-content;
+        height: fit-content;
+        border-radius: 5px;
+        padding: 5px;
+      }
+    }
+    &--msgbox.float-right {
+      flex-direction: row-reverse;
+      .chat__view--msgbox__content {
+        background-color: #eaeaea;
+      }
+    }
+    &--msgbox.float-left {
+      flex-direction: row;
+      .chat__view--msgbox__content {
+        background-color: #79bbff;
+      }
     }
   }
   &__write {
