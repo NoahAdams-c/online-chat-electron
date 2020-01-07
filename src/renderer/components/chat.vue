@@ -3,7 +3,7 @@
  * @Author: OBKoro1
  * @Date: 2019-08-28 15:10:22
  * @LastEditors: chenchen
- * @LastEditTime: 2020-01-07 16:22:19
+ * @LastEditTime: 2020-01-07 17:19:13
  -->
 <template>
   <div class="chat">
@@ -71,7 +71,8 @@
             </div>
             <!-- 对话展示 -->
             <div v-loading="isLoadingMsg"
-                 class="chat__view">
+                 class="chat__view"
+                 ref="chatview">
               <!-- <textarea ref="viewTextarea" v-model="logs" readonly /> -->
               <div class="chat__view--msgbox"
                    :class="
@@ -163,6 +164,15 @@ export default {
         } else {
           this.toWho = {}
         }
+      },
+      deep: true
+    },
+    msgList: {
+      handler() {
+        // 每当消息展示框消息队列变化时将滚动条移至底部
+        this.$nextTick(() => {
+          this.$refs.chatview.scrollTop = this.$refs.chatview.scrollHeight
+        })
       },
       deep: true
     }
@@ -471,6 +481,22 @@ export default {
     width: 100%;
     transform: translate(0, -50%);
     top: 50%;
+  }
+
+  // 滚动条样式
+  ::-webkit-scrollbar {
+    width: 5px;
+  }
+  ::-webkit-scrollbar-thumb {
+    width: 5px;
+    border-radius: 5px;
+    background-color: #79bbff;
+  }
+  ::-webkit-scrollbar-track {
+    width: 5px;
+  }
+  ::-webkit-scrollbar-button {
+    display: none;
   }
 }
 </style>
