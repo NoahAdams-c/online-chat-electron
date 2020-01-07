@@ -3,7 +3,7 @@
  * @Author: chenchen
  * @Date: 2019-10-28 15:31:32
  * @LastEditors: chenchen
- * @LastEditTime: 2019-11-08 15:05:41
+ * @LastEditTime: 2020-01-07 15:41:17
  -->
 <template>
   <div class="login">
@@ -11,15 +11,19 @@
       <div slot="header">
         <span class="login__title">用户登录</span>
       </div>
-      <el-form ref="form" :model="formObj" label-width="80px">
+      <el-form ref="form"
+               :model="formObj"
+               label-width="80px">
         <el-form-item label="用户名">
           <el-input v-model="formObj.userId" />
         </el-form-item>
         <el-form-item label="密码">
-          <el-input v-model="formObj.password" type="password" />
+          <el-input v-model="formObj.password"
+                    type="password" />
         </el-form-item>
         <div class="login__submit">
-          <el-button type="primary" @click="doLogin">
+          <el-button type="primary"
+                     @click="doLogin">
             登录
           </el-button>
           <el-button @click="toRegist">
@@ -58,7 +62,7 @@ export default {
         })
         // 登录成功将用户信息缓存到store并创建socket连接
         this.$store.commit("updateUserInfo", result.data)
-        this.initSocket(result.data.user_id, result.data.nick_name)
+        this.initSocket(result.data)
         this.$router.push({ path: "/chat" })
       } else {
         this.$message.error(result.msg)
@@ -69,14 +73,14 @@ export default {
       this.$router.push({ path: "/regist" })
     },
 
-    initSocket(userId, nickName) {
+    initSocket(userInfo) {
       let socketObj = null
       // 创建socket
       console.log(this.SERVER_HOST)
+      console.log(userInfo)
       socketObj = this.$socket(`ws://${this.SERVER_HOST}`, {
         query: {
-          userId,
-          nickName
+          userInfo: JSON.stringify(userInfo)
         }
       })
       // 监听是否成功连接
@@ -85,12 +89,12 @@ export default {
       })
       // 监听在线人数
       socketObj.on("onlineUsers", maps => {
-        delete maps[userId]
+        delete maps[userInfo.user_id]
         let onlineArrs = []
         for (let key in maps) {
           onlineArrs.push({
-            userId: key,
-            nickName: maps[key].nickName
+            user_id: key,
+            nick_name: maps[key].nick_name
           })
         }
         this.$store.commit("updateOnlineUsers", onlineArrs)

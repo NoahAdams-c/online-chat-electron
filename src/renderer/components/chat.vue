@@ -3,7 +3,7 @@
  * @Author: OBKoro1
  * @Date: 2019-08-28 15:10:22
  * @LastEditors: chenchen
- * @LastEditTime: 2020-01-03 18:12:47
+ * @LastEditTime: 2020-01-07 15:44:32
  -->
 <template>
   <div class="chat">
@@ -14,17 +14,13 @@
           <!-- 用户信息 -->
           <div class="chat__user">
             <div class="chat__user--avatar">
-              <el-upload
-                :action="
+              <el-upload :action="
                   `http://${SERVER_HOST}/${userInfo.user_id}/uploadAvatar`
                 "
-                :show-file-list="false"
-                :on-success="afterUploadAvatar"
-              >
-                <div
-                  class="avatar-img"
-                  :style="`background: url(${avatarUrl});`"
-                />
+                         :show-file-list="false"
+                         :on-success="afterUploadAvatar">
+                <div class="avatar-img"
+                     :style="`background: url(${avatarUrl});`" />
               </el-upload>
             </div>
             <div class="chat__user--name">
@@ -33,19 +29,17 @@
           </div>
 
           <!-- 聊天列表 -->
-          <div v-loading="isLoadingList" class="chat__slist">
-            <div
-              v-for="(item, index) in getOnlineUsers"
-              :key="index"
-              class="chat__slist--item"
-              :class="{ active: toWho.userId === item.userId }"
-              @click="startChat(item)"
-            >
-              {{ item.nickName }}
-              <div
-                v-if="unreadSessionList.indexOf(item.userId) > -1"
-                class="chat__slist--item__unread"
-              >
+          <div v-loading="isLoadingList"
+               class="chat__slist">
+            <div v-for="(item, index) in getOnlineUsers"
+                 :key="index"
+                 class="chat__slist--item"
+                 :class="{ active: toWho.user_id === item.user_id }"
+                 @click="startChat(item)">
+              <img :src="item.avatar"></img>
+              {{ item.nick_name }}
+              <div v-if="unreadSessionList.indexOf(item.user_id) > -1"
+                   class="chat__slist--item__unread">
                 New
               </div>
             </div>
@@ -53,36 +47,39 @@
           <!-- 底部菜单 -->
           <div class="chat__menu">
             <div class="chat__menu--item">
-              <i class="el-icon-setting" title="设置" />
+              <i class="el-icon-setting"
+                 title="设置" />
             </div>
             <div class="chat__menu--item">
-              <i class="el-icon-circle-plus-outline" title="添加朋友" />
+              <i class="el-icon-circle-plus-outline"
+                 title="添加朋友" />
             </div>
             <div class="chat__menu--item">
-              <i class="el-icon-switch-button" title="退出" @click="logout" />
+              <i class="el-icon-switch-button"
+                 title="退出"
+                 @click="logout" />
             </div>
           </div>
         </el-aside>
         <!-- 主界面 -->
         <el-main height="">
-          <template v-if="!!toWho.userId">
+          <template v-if="!!toWho.user_id">
             <!-- 标题 -->
             <div class="chat__title">
-              {{ toWho.nickName }}
+              {{ toWho.nick_name }}
             </div>
             <!-- 对话展示 -->
-            <div v-loading="isLoadingMsg" class="chat__view">
+            <div v-loading="isLoadingMsg"
+                 class="chat__view">
               <!-- <textarea ref="viewTextarea" v-model="logs" readonly /> -->
-              <div
-                class="chat__view--msgbox"
-                :class="
+              <div class="chat__view--msgbox"
+                   :class="
                   item.user_id === userInfo.user_id
                     ? 'float-right'
                     : 'float-left'
                 "
-                v-for="(item, index) of msgList"
-                :key="index"
-              >
+                   v-for="(item, index) of msgList"
+                   :key="index">
                 <div class="chat__view--msgbox__content">
                   {{ item.content }}
                 </div>
@@ -90,12 +87,10 @@
             </div>
             <!-- 输入部分 -->
             <div class="chat__write">
-              <textarea
-                ref="writeTextarea"
-                v-model="msg"
-                @keypress.enter="sendMessage"
-              />
-            </div>
+              <textarea ref="writeTextarea"
+                        v-model="msg"
+                        @keypress.enter="sendMessage" />
+              </div>
           </template>
           <!-- 当未选择用户开始会话时展示空白页 -->
           <template v-else>
@@ -120,7 +115,6 @@ export default {
     return {
       userInfo: {}, // 用户信息
       avatarUrl: "", // 头像url
-      // msgList: [],
       msg: "", // 当前输入的消息
       logs: "", // 消息缓存
       toWho: {}, // 消息接收方的userId,nickName
@@ -159,7 +153,7 @@ export default {
         if (curVal && curVal.length) {
           let flag = false
           for (let item of curVal) {
-            if (item.userId === this.toWho.userId) {
+            if (item.user_id === this.toWho.user_id) {
               flag = true
               break
             }
@@ -187,14 +181,15 @@ export default {
       this.socketObj.on("resp", data => {
         // 仅当收发人为当前会话收发人时才将消息缓存并显示
         if (
-          data.from === this.toWho.userId &&
+          data.from === this.toWho.user_id &&
           data.to === this.userInfo.user_id
         ) {
           // this.logs += `\n${new Date().toLocaleString()}\n`
           // this.logs += `${this.toWho.nickName}：${data.msg}\n`
           this.msgList.push({
             user_id: data.from,
-            content: data.msg
+            content: data.msg,
+            created_at: data.created_at
           })
         } else {
           // 否则将userId存入未读会话列表并在会话列表提示
@@ -210,7 +205,7 @@ export default {
      */
     async startChat(toWho) {
       // 如存在于未读会话中则先移除
-      let index = this.unreadSessionList.indexOf(toWho.userId)
+      let index = this.unreadSessionList.indexOf(toWho.user_id)
       if (index > -1) {
         this.unreadSessionList.splice(index, 1)
       }
@@ -225,7 +220,7 @@ export default {
       // 查询历史消息
       let params = {
         user_id: this.userInfo.user_id,
-        to_who: this.toWho.userId,
+        to_who: this.toWho.user_id,
         start_date: start_date,
         end_date: end_date
       }
@@ -260,11 +255,12 @@ export default {
       // this.logs += `我：${this.msg}\n`
       this.msgList.push({
         user_id: this.userInfo.user_id,
-        content: this.msg
+        content: this.msg,
+        created_at: new Date()
       })
       let data = {
         msg: this.msg,
-        to: this.toWho.userId
+        to: this.toWho.user_id
       }
       // 调起后台chat事件发送消息
       this.socketObj.emit("chat", data)
@@ -428,6 +424,8 @@ export default {
         height: fit-content;
         border-radius: 5px;
         padding: 5px;
+        max-width: 40%;
+        overflow-wrap: break-word;
       }
     }
     &--msgbox.float-right {

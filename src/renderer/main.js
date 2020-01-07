@@ -3,7 +3,7 @@
  * @Author: OBKoro1
  * @Date: 2019-08-28 15:26:51
  * @LastEditors: chenchen
- * @LastEditTime: 2020-01-03 17:11:27
+ * @LastEditTime: 2020-01-07 15:45:58
  */
 import Vue from "vue"
 import App from "./App"
@@ -51,6 +51,7 @@ const SERVER_HOST =
   process.env.NODE_ENV === "production"
     ? "119.23.52.173:7003"
     : "127.0.0.1:7003"
+// const SERVER_HOST = "119.23.52.173:7003"
 // 将socket注入全局对象
 Vue.prototype.$socket = SIO
 Vue.prototype.SERVER_HOST = SERVER_HOST
