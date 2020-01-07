@@ -3,7 +3,7 @@
  * @Author: chenchen
  * @Date: 2019-10-28 15:31:32
  * @LastEditors: chenchen
- * @LastEditTime: 2020-01-07 15:41:17
+ * @LastEditTime: 2020-01-07 16:14:26
  -->
 <template>
   <div class="login">
@@ -94,7 +94,8 @@ export default {
         for (let key in maps) {
           onlineArrs.push({
             user_id: key,
-            nick_name: maps[key].nick_name
+            nick_name: maps[key].nick_name,
+            avatar: "http://" + this.SERVER_HOST + maps[key].avatar
           })
         }
         this.$store.commit("updateOnlineUsers", onlineArrs)

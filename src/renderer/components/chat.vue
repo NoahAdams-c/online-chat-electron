@@ -3,7 +3,7 @@
  * @Author: OBKoro1
  * @Date: 2019-08-28 15:10:22
  * @LastEditors: chenchen
- * @LastEditTime: 2020-01-07 15:44:32
+ * @LastEditTime: 2020-01-07 16:22:19
  -->
 <template>
   <div class="chat">
@@ -36,8 +36,9 @@
                  class="chat__slist--item"
                  :class="{ active: toWho.user_id === item.user_id }"
                  @click="startChat(item)">
-              <img :src="item.avatar"></img>
-              {{ item.nick_name }}
+              <img class="chat__slist--item__avatar"
+                   :src="item.avatar"></img>
+              <div class="chat__slist--item__nickname">{{ item.nick_name }}</div>
               <div v-if="unreadSessionList.indexOf(item.user_id) > -1"
                    class="chat__slist--item__unread">
                 New
@@ -179,6 +180,7 @@ export default {
     if (this.socketObj) {
       // 监听服务端发送的消息
       this.socketObj.on("resp", data => {
+        console.log(data)
         // 仅当收发人为当前会话收发人时才将消息缓存并显示
         if (
           data.from === this.toWho.user_id &&
@@ -365,8 +367,17 @@ export default {
       padding: 0 10px;
       color: #606266;
       background-color: #ebeef5;
+      display: flex;
+      align-items: center;
       &.active {
         background-color: #79bbff;
+      }
+      &__avatar {
+        width: 30px;
+      }
+      &__nickname {
+        flex: 1;
+        padding: 5px;
       }
       &__unread {
         display: inline-block;
