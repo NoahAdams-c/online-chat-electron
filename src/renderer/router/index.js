@@ -3,7 +3,7 @@
  * @Author: OBKoro1
  * @Date: 2019-10-25 13:45:59
  * @LastEditors: chenchen
- * @LastEditTime: 2019-10-30 12:09:28
+ * @LastEditTime: 2020-03-09 11:37:55
  */
 import Vue from "vue"
 import Router from "vue-router"
@@ -22,9 +22,10 @@ export default new Router({
       component: Login
     },
     {
-      path: "/chat",
+      path: "/chat/:user_id",
       name: "Chat",
-      component: Chat
+      component: Chat,
+      props: true
     },
     {
       path: "/regist",

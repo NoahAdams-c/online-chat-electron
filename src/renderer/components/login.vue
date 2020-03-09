@@ -3,7 +3,7 @@
  * @Author: chenchen
  * @Date: 2019-10-28 15:31:32
  * @LastEditors: chenchen
- * @LastEditTime: 2020-01-07 16:14:26
+ * @LastEditTime: 2020-03-09 15:54:30
  -->
 <template>
   <div class="login">
@@ -63,7 +63,7 @@ export default {
         // 登录成功将用户信息缓存到store并创建socket连接
         this.$store.commit("updateUserInfo", result.data)
         this.initSocket(result.data)
-        this.$router.push({ path: "/chat" })
+        this.$router.push({ path: `/chat/${result.data.user_id}` })
       } else {
         this.$message.error(result.msg)
       }
@@ -89,13 +89,15 @@ export default {
       })
       // 监听在线人数
       socketObj.on("onlineUsers", maps => {
+        console.log(maps)
         delete maps[userInfo.user_id]
         let onlineArrs = []
         for (let key in maps) {
+          const user_info = JSON.parse(maps[key])
           onlineArrs.push({
             user_id: key,
-            nick_name: maps[key].nick_name,
-            avatar: "http://" + this.SERVER_HOST + maps[key].avatar
+            nick_name: user_info.nick_name,
+            avatar: "http://" + this.SERVER_HOST + user_info.avatar
           })
         }
         this.$store.commit("updateOnlineUsers", onlineArrs)
